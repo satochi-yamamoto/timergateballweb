@@ -50,9 +50,14 @@ Os fluxogramas utilizam a sintaxe **Mermaid**, que é suportada nativamente pelo
 
 ## 📝 Estrutura da Aplicação
 
-A aplicação está organizada em:
+A estrutura atual do projeto foi validada e está organizada em:
 
 ```
+.
+├── public/          # Arquivos estáticos publicados pelo Vite
+│   └── sound/       # Arquivos das chamadas de áudio da partida
+├── docs/            # Documentação técnica, fluxogramas e SQL auxiliar
+├── tools/           # Scripts auxiliares executados no build
 src/
 ├── components/      # Componentes reutilizáveis
 │   ├── GameScreen.jsx
@@ -72,6 +77,14 @@ src/
 └── pages/          # Páginas estáticas
 ```
 
+Arquivos de referência para manutenção:
+
+- `src/components/GameScreen.jsx`: tela principal da partida, permissões, eventos de timer, pontuação e chamadas de áudio.
+- `src/hooks/useGameState.js`: estado online sincronizado com Supabase e atualização local do cronômetro.
+- `src/hooks/useLocalGame.js`: estado local usado no modo sem autenticação.
+- `src/hooks/useAudioManager.js`: inicialização e execução dos áudios e bipes.
+- `public/sound/`: arquivos `Parte-1.mp3` a `Parte-5.mp3` usados nas chamadas da partida.
+
 ## 🚀 Funcionalidades Principais
 
 ### ✅ Implementadas
@@ -84,6 +97,24 @@ src/
 - [x] Controle de permissões (capitão vs visualização)
 - [x] Alertas sonoros e visuais
 - [x] Wake lock durante jogos
+
+## 🔊 Chamadas de Áudio
+
+O jogo usa um cronômetro regressivo de 30 minutos (`1800` segundos). As chamadas de áudio são disparadas em `src/components/GameScreen.jsx` e executadas por `src/hooks/useAudioManager.js`.
+
+| Período da partida | Tempo decorrido | Tempo restante | Arquivo/alerta |
+| --- | ---: | ---: | --- |
+| Início | 0 min | 30 min | `Parte-1.mp3` |
+| Meio da partida | 15 min | 15 min | `Parte-2.mp3` |
+| Terço final | 20 min | 10 min | `Parte-3.mp3` |
+| Reta final | 25 min | 5 min | `Parte-4.mp3` |
+| Encerramento | 30 min | 0 min | `Parte-5.mp3` |
+
+Também existem alertas sintéticos gerados pela Web Audio API:
+
+- Alerta nos minutos restantes `15`, `10`, `5`, `2` e `1`, sempre quando o contador chega a `00` segundos.
+- Bipe a cada segundo nos últimos `10` segundos da partida.
+- O áudio só é inicializado depois da primeira interação do usuário, respeitando as regras de autoplay dos navegadores.
 
 ### 🔄 Fluxo de Dados
 ```
@@ -102,7 +133,8 @@ WebSocket ← Real-time Subscriptions ← Database Changes
 
 ### Controle de Jogo
 - Apenas capitães podem controlar o timer
-- Duplo toque para pausar
+- Toque simples no timer para iniciar, pausar ou retomar
+- Duplo toque no timer para abrir a confirmação de finalização/reinício
 - Confirmação obrigatória para reset
 - Timer de 30 minutos padrão
 

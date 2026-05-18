@@ -177,7 +177,16 @@ flowchart LR
 - Cronômetro de 30 minutos
 - Controles de play/pause/reset
 - Alertas visuais e sonoros
-- Duplo toque para pausar
+- Toque simples para iniciar, pausar ou retomar
+- Duplo toque para confirmar finalização/reinício
+
+### 🔊 **Períodos das Chamadas de Áudio**
+- Início da partida: `Parte-1.mp3`
+- 15 minutos decorridos / 15 minutos restantes: `Parte-2.mp3`
+- 20 minutos decorridos / 10 minutos restantes: `Parte-3.mp3`
+- 25 minutos decorridos / 5 minutos restantes: `Parte-4.mp3`
+- Fim do tempo / 0 minuto restante: `Parte-5.mp3`
+- Alertas extras: minutos restantes 15, 10, 5, 2 e 1 no segundo `00`, mais bipes nos últimos 10 segundos
 
 ### 🏆 **Sistema de Pontuação**
 - Pontuação individual (0→1→2→3→5→0)

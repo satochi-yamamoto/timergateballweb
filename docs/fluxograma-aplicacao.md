@@ -87,7 +87,7 @@ flowchart TD
     J13 --> J14[Atualização em Tempo Real]
     J14 --> J15[Sincronização via WebSocket]
     
-    J6 --> J16[Duplo Toque para Pausar]
+    J6 --> J16[Duplo Toque para Confirmar Reinício]
     J16 --> J17[Confirmação de Reinício]
     
     J --> J18[Finalização do Jogo]
@@ -170,7 +170,7 @@ flowchart TD
     D --> D3[Controles de Jogo]
     
     D1 --> D4[Toque Simples: Play/Pause]
-    D1 --> D5[Duplo Toque: Pausar]
+    D1 --> D5[Duplo Toque: Confirmar Reinício]
     D1 --> D6[Botão Reset: Reiniciar]
     
     D4 --> D7[Atualizar Estado no Supabase]
@@ -352,10 +352,26 @@ flowchart TD
 ### 4. **Áudio**
 - Alertas sonoros para eventos importantes
 - Inicialização sob demanda para compatibilidade
+- Chamadas por arquivo durante o jogo: início, 15, 20, 25 e 30 minutos decorridos
+- Alertas sintéticos nos minutos restantes 15, 10, 5, 2 e 1, além de bipes nos últimos 10 segundos
 
 ### 5. **Responsividade**
 - Interface adaptável para diferentes dispositivos
 - Otimizada para uso em tablets e smartphones
+
+## Períodos das Chamadas de Áudio
+
+As chamadas de áudio são disparadas pela tela de jogo (`src/components/GameScreen.jsx`) e executadas pelo hook `src/hooks/useAudioManager.js`. A partida tem 30 minutos, equivalentes a `1800` segundos.
+
+| Período | Tempo decorrido | Tempo restante | Disparo | Arquivo |
+| --- | ---: | ---: | --- | --- |
+| Início da partida | 0 min | 30 min | Capitão inicia o jogo em `lobby` | `public/sound/Parte-1.mp3` |
+| Primeira chamada intermediária | 15 min | 15 min | `elapsed === 900` | `public/sound/Parte-2.mp3` |
+| Segunda chamada intermediária | 20 min | 10 min | `elapsed === 1200` | `public/sound/Parte-3.mp3` |
+| Terceira chamada intermediária | 25 min | 5 min | `elapsed === 1500` | `public/sound/Parte-4.mp3` |
+| Encerramento | 30 min | 0 min | `timeLeft === 0` | `public/sound/Parte-5.mp3` |
+
+Além dos arquivos acima, o sistema toca alertas sintéticos quando restam 15, 10, 5, 2 e 1 minutos, sempre no segundo `00`, e bipes em cada um dos últimos 10 segundos.
 
 ## Fluxo de Dados
 
